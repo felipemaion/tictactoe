@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
 # Jogo da Velha || TicTacToe Game
 # by FELIPE MAION
 # 21/02/2018
