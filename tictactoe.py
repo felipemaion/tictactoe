@@ -1,6 +1,16 @@
 # Jogo da Velha || TicTacToe Game
 # by FELIPE MAION
 # 21/02/2018
+
+
+#  ████████╗██╗ ██████╗████████╗ █████╗  ██████╗████████╗ ██████╗ ███████╗
+#  ╚══██╔══╝██║██╔════╝╚══██╔══╝██╔══██╗██╔════╝╚══██╔══╝██╔═══██╗██╔════╝
+#     ██║   ██║██║        ██║   ███████║██║        ██║   ██║   ██║█████╗
+#     ██║   ██║██║        ██║   ██╔══██║██║        ██║   ██║   ██║██╔══╝
+#     ██║   ██║╚██████╗   ██║   ██║  ██║╚██████╗   ██║   ╚██████╔╝███████╗
+#     ╚═╝   ╚═╝ ╚═════╝   ╚═╝   ╚═╝  ╚═╝ ╚═════╝   ╚═╝    ╚═════╝ ╚══════╝
+#
+
 import os
 
 class Player:
@@ -18,7 +28,7 @@ class Grid:
 
     def mark(self, player, position): # Draw the mark in the position, if available!
         if self.grid[position] == " ":
-            self.grid[position] = player.color + player.symbol + bcolors.ENDC
+            self.grid[position] = bcolors.BOLD + player.color + player.symbol + bcolors.ENDC
             return True
         else:
             print(bcolors.BOLD + bcolors.FAIL + "\tPosição já ocupada!" + bcolors.ENDC)
@@ -28,16 +38,20 @@ class Grid:
         # 0   1   2
         # 3   4   5
         # 6   7   8
-        print("0|1|2 \t\t {} | {} | {}".format(*self.grid[:3]))
-        print("----- \t\t ----------")
-        print("3|4|5 \t\t {} | {} | {}".format(*self.grid[3:6]))
-        print("----- \t\t ----------")
-        print("6|7|8 \t\t {} | {} | {}".format(*self.grid[6:9]))
+        print("╔".ljust(36,"═") + "╗")
+        print("║" + "║".rjust(36," "))
+        print("║"+ "0│1│2".rjust(9," ") + "     {} ║ {} ║ {}".format(*self.grid[:3]) + "║".rjust(13," "))
+        print("║"+ "─┼─┼─".rjust(9," ") + "   ════╬═══╬════" + "║".rjust(11," "))
+        print("║"+ "3│4│5".rjust(9," ") + "     {} ║ {} ║ {}".format(*self.grid[3:6]) + "║".rjust(13," "))
+        print("║"+ "─┼─┼─".rjust(9," ") + "   ════╬═══╬════" + "║".rjust(11," "))
+        print("║"+ "6│7│8".rjust(9," ") + "     {} ║ {} ║ {}".format(*self.grid[6:9]) + "║".rjust(13," "))
+        print("║" + "║".rjust(36," "))
+        print("╚".ljust(36,"═") + "╝")
 
     def check(self, win): # Check if the 3 positions has the same value, and not empty.
         if self.grid[win[0]] == self.grid[win[1]] and \
-           self.grid[win[1]] == self.grid[win[2]] and\
-           self.grid[win[0]] != " ":
+                self.grid[win[1]] == self.grid[win[2]] and \
+                self.grid[win[0]] != " ":
             return True
         return False
 
@@ -53,29 +67,31 @@ class Game:
         self.current_match = 0 # Current match (games played).
         self.score = {self.player1:0, self.player2:0, 'VELHA':0}
 
+
     def play(self):
         while self.current_match != self.matches:
             winner = False
             while not winner:
                 self.draw_game()
-                print("\n{}, sua vez de jogar com o '{}'".format(self.current_player, self.current_player.symbol))
+                print("\n\tTecle 'Q' para sair")
+                print(self.current_player.color + "Joga {}".format(self.current_player).center(36) + bcolors.ENDC)
                 self.get_position(self.current_player)
                 self.draw_game()
                 self.count_marks += 1
                 if self.check_winner(self.grid): # Do we have a winner??
-                    print("Fim da partida! - Ponto para {}".format(self.current_player))
+                    print("\tFim da partida! \n\t+1 Ponto para {}".format(self.current_player))
                     self.score[self.current_player] += 1
                     winner = self.reset()
                 else: # No player won, may be it is tied
                     if self.count_marks == 9:
-                        print(bcolors.FAIL + "DEU VELHA!!" + bcolors.ENDC)
+                        print(bcolors.FAIL + "\tDEU VELHA!!" + bcolors.ENDC)
                         self.score['VELHA'] += 1
                         winner = self.reset()
                     else: # If not tied, change player and keep playing.
                         self.alternate_player()
         # End of all matches!!
         self.draw_scores()
-        print(bcolors.WARNING + bcolors.BOLD + "\t\tFim de Jogo!!\n\n" + bcolors.ENDC)
+        print(bcolors.WARNING + bcolors.BOLD + "Fim de Jogo!!\n\n".center(36) + bcolors.ENDC)
 
     def draw_game(self):
         self.draw_scores()
@@ -83,17 +99,20 @@ class Game:
 
     def draw_scores(self):
         os.system('cls' if os.name == 'nt' else 'clear')  # Não funciona no Pycharm.
-        print("Placar: {}/{}".format(self.current_match,self.matches))
+        print("╔".ljust(36,"═") + "╗")
+        print("║" + "Placar: {}/{}".format(self.current_match,self.matches).center(35) +  "║")
+        print("╠".ljust(36,"═") + "╣")
         for player, points in self.score.items():
             cor = player.color if player != 'VELHA' else bcolors.FAIL
-            print( cor + str(points) + " pts :\t" + str(player) +  bcolors.ENDC)
-        print("\n")
+            print("║\t" + cor + str(points) + " pts :\t" + str(player)[:15].ljust(20," ") +  bcolors.ENDC + "║")
+        print("╚".ljust(36,"═") + "╝")
+        # print("\n")
 
     def reset(self):
         self.grid = Grid()
         self.count_marks = 0
         self.current_match += 1
-        input(bcolors.WARNING + "\nPressione ENTER para continuar, e atualizar placar." + bcolors.ENDC)
+        input(bcolors.WARNING + "\nPressione ENTER para continuar." + bcolors.ENDC)
         return True
 
     def get_position(self, player):
@@ -101,7 +120,7 @@ class Game:
         position = None
         while not valid:
             try: # Be nice and input a number or 'Q' otherwise you will be trapped.
-                position = input("'Q' para finalizar\nPosição [0-8]:>> ")
+                position = input(player.color + " Posição [0-8]:>> " + bcolors.ENDC)
                 if position.upper() == 'Q':
                     os._exit(1) # Not sure how to end all loops... so... kill it!!!
                 position = int(position)
@@ -115,7 +134,7 @@ class Game:
         all_wins = [[0,4,8], [2,4,6], [0,3,6], [1,4,7], [2,5,8],[0,1,2],[3,4,5],[6,7,8]]
         for win in all_wins:
             if grid.check(win):
-                print("Parabéns {}, venceu com '{}'".format(self.current_player.name, self.current_player.symbol))
+                print("\tParabéns {}, venceu com '{}'".format(self.current_player.name, self.current_player.symbol))
                 return True
         return False
 
@@ -133,10 +152,23 @@ class bcolors: # let's make it more colorful!!!
     UNDERLINE = '\033[4m'
 
 if __name__ == "__main__": # Calling from shell: python tictactoe.py ??
-    player1 = input("Nome do Jogador 1 (X) [Enter = Rafael]: ") or "Rafael"
-    player2 = input("Nome do Jogador 2 (O) [Enter = Luiz]: ") or "Luiz"
+    os.system('cls' if os.name == 'nt' else 'clear')  # Não funciona no Pycharm.
+    # print("\t\t\t████████╗██╗ ██████╗████████╗ █████╗  ██████╗████████╗ ██████╗ ███████╗\n"
+    #       "\t\t\t╚══██╔══╝██║██╔════╝╚══██╔══╝██╔══██╗██╔════╝╚══██╔══╝██╔═══██╗██╔════╝\n"
+    #       "\t\t\t   ██║   ██║██║        ██║   ███████║██║        ██║   ██║   ██║█████╗\n"
+    #       "\t\t\t   ██║   ██║██║        ██║   ██╔══██║██║        ██║   ██║   ██║██╔══╝\n"
+    #       "\t\t\t   ██║   ██║╚██████╗   ██║   ██║  ██║╚██████╗   ██║   ╚██████╔╝███████╗\n"
+    #       "\t\t\t   ╚═╝   ╚═╝ ╚═════╝   ╚═╝   ╚═╝  ╚═╝ ╚═════╝   ╚═╝    ╚═════╝ ╚══════╝")
+    print("╔".ljust(36,"═") + "╗")
+    print("║" + "╔╦╗┬┌─┐╔╦╗┌─┐┌─┐╔╦╗┌─┐┌─┐".center(35) + "║")
+    print("║" + " ║ ││   ║ ├─┤│   ║ │ │├┤ ".center(35) + "║")
+    print("║" + " ╩ ┴└─┘ ╩ ┴ ┴└─┘ ╩ └─┘└─┘".center(35) + "║")
+    print("╚".ljust(36,"═") + "╝")
+    print("por Felipe Maion".rjust(36," "))
+    player1 = input("Nome do Jogador 1 (X):\n[Enter = Rafael] >> ") or "Rafael"
+    player2 = input("Nome do Jogador 2 (O):\n[Enter = Luiz] >> ") or "Luiz"
     try:
-        partidas = int(input("Número de partidas [Enter = 3]: "))
+        partidas = int(input("Número de partidas:\n[Enter = 3] >> "))
     except:
         partidas = 3
     tictactoe = Game(player1, player2, partidas)
