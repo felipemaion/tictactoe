@@ -14,7 +14,7 @@
 import os
 
 class Player:
-    def __init__(self, name: str, symbol: str, score=0):
+    def __init__(self, name:str, symbol:str):
         self.name = name
         self.symbol = symbol
         self.color = bcolors.OKBLUE if symbol == "X" else bcolors.OKGREEN# Define a color to each player
