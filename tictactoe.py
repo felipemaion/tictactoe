@@ -15,6 +15,9 @@
 
 import os
 
+class StopGameException(Exception):
+    pass
+
 class Player:
     def __init__(self, name:str, symbol:str):
         self.name = name
@@ -124,14 +127,12 @@ class Game:
             try: # Be nice and input a number or 'Q' otherwise you will be trapped.
                 position = input(player.color + " Posição [1-9]:>> " + bcolors.ENDC)
                 if position.upper() == 'Q':
-
-                    os._exit(1) # Not sure how to end all loops... so... kill it!!!
+                    raise StopGameException()
                 position = int(position)
                 valid = True if self.grid.mark(player,position - 1) else False
             except KeyboardInterrupt:
-                clear_screen()
-                os._exit(1)
-            except:
+                raise StopGameException()
+            except ValueError:
                 print(bcolors.BOLD + bcolors.FAIL + "\tPosição inválida" + bcolors.ENDC)
                 valid = False
         return position
@@ -181,9 +182,7 @@ if __name__ == "__main__": # Calling from shell: python tictactoe.py ??
     except:
         partidas = 3
     tictactoe = Game(player1, player2, partidas)
-    tictactoe.play()
-
-
-
-
-
+    try:
+        tictactoe.play()
+    except StopGameException:
+        clear_screen()
