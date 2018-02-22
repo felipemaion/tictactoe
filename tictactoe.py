@@ -15,7 +15,7 @@
 
 import os
 
-class StopGameExcepction(Exception):
+class StopGameException(Exception):
     pass
 
 class Player:
