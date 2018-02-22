@@ -37,16 +37,16 @@ class Grid:
             return False
 
     def draw(self):
-        # 0   1   2
-        # 3   4   5
-        # 6   7   8
+        # 1   2   3
+        # 4   5   6
+        # 7   8   9
         print("╔".ljust(36,"═") + "╗")
         print("║" + "║".rjust(36," "))
-        print("║"+ "0│1│2".rjust(9," ") + "     {} ║ {} ║ {}".format(*self.grid[:3]) + "║".rjust(13," "))
+        print("║"+ "1│2│3".rjust(9," ") + "     {} ║ {} ║ {}".format(*self.grid[:3]) + "║".rjust(13," "))
         print("║"+ "─┼─┼─".rjust(9," ") + "   ════╬═══╬════" + "║".rjust(11," "))
-        print("║"+ "3│4│5".rjust(9," ") + "     {} ║ {} ║ {}".format(*self.grid[3:6]) + "║".rjust(13," "))
+        print("║"+ "4│5│6".rjust(9," ") + "     {} ║ {} ║ {}".format(*self.grid[3:6]) + "║".rjust(13," "))
         print("║"+ "─┼─┼─".rjust(9," ") + "   ════╬═══╬════" + "║".rjust(11," "))
-        print("║"+ "6│7│8".rjust(9," ") + "     {} ║ {} ║ {}".format(*self.grid[6:9]) + "║".rjust(13," "))
+        print("║"+ "7│8│9".rjust(9," ") + "     {} ║ {} ║ {}".format(*self.grid[6:9]) + "║".rjust(13," "))
         print("║" + "║".rjust(36," "))
         print("╚".ljust(36,"═") + "╝")
 
@@ -100,7 +100,7 @@ class Game:
         self.grid.draw()
 
     def draw_scores(self):
-        os.system('cls' if os.name == 'nt' else 'clear')  # Não funciona no Pycharm.
+        clear_screen()
         print("╔".ljust(36,"═") + "╗")
         print("║" + "Placar: {}/{}".format(self.current_match,self.matches).center(35) +  "║")
         print("╠".ljust(36,"═") + "╣")
@@ -122,11 +122,15 @@ class Game:
         position = None
         while not valid:
             try: # Be nice and input a number or 'Q' otherwise you will be trapped.
-                position = input(player.color + " Posição [0-8]:>> " + bcolors.ENDC)
+                position = input(player.color + " Posição [1-9]:>> " + bcolors.ENDC)
                 if position.upper() == 'Q':
+
                     os._exit(1) # Not sure how to end all loops... so... kill it!!!
                 position = int(position)
-                valid = True if self.grid.mark(player,position) else False
+                valid = True if self.grid.mark(player,position - 1) else False
+            except KeyboardInterrupt:
+                clear_screen()
+                os._exit(1)
             except:
                 print(bcolors.BOLD + bcolors.FAIL + "\tPosição inválida" + bcolors.ENDC)
                 valid = False
@@ -143,6 +147,9 @@ class Game:
     def alternate_player(self): # swap players
         self.current_player, self.next_player = self.next_player, self.current_player
 
+def clear_screen():
+    os.system('cls' if os.name == 'nt' else 'clear')  # Não funciona no Pycharm.
+
 class bcolors: # let's make it more colorful!!!
     HEADER = '\033[95m'
     OKBLUE = '\033[94m'
@@ -154,7 +161,7 @@ class bcolors: # let's make it more colorful!!!
     UNDERLINE = '\033[4m'
 
 if __name__ == "__main__": # Calling from shell: python tictactoe.py ??
-    os.system('cls' if os.name == 'nt' else 'clear')  # Não funciona no Pycharm.
+    clear_screen()
     # print("\t\t\t████████╗██╗ ██████╗████████╗ █████╗  ██████╗████████╗ ██████╗ ███████╗\n"
     #       "\t\t\t╚══██╔══╝██║██╔════╝╚══██╔══╝██╔══██╗██╔════╝╚══██╔══╝██╔═══██╗██╔════╝\n"
     #       "\t\t\t   ██║   ██║██║        ██║   ███████║██║        ██║   ██║   ██║█████╗\n"
@@ -175,4 +182,8 @@ if __name__ == "__main__": # Calling from shell: python tictactoe.py ??
         partidas = 3
     tictactoe = Game(player1, player2, partidas)
     tictactoe.play()
+
+
+
+
 
